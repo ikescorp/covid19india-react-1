@@ -7,6 +7,7 @@ import {format, subDays} from 'date-fns';
 import React, {useState, useEffect} from 'react';
 import DatePicker from 'react-date-picker';
 import * as Icon from 'react-feather';
+import {Helmet} from 'react-helmet';
 import {useLocation} from 'react-router-dom';
 import {useEffectOnce, useLocalStorage} from 'react-use';
 
@@ -45,7 +46,7 @@ function PatientDB(props) {
   useEffectOnce(() => {
     try {
       axios
-        .get('https://api.covid19india.org/raw_data.json')
+        .get('https://api.covid19india.org/raw_data3.json')
         .then((response) => {
           setPatients(response.data.raw_data.reverse());
           setFetched(true);
@@ -111,6 +112,15 @@ function PatientDB(props) {
 
   return (
     <div className="PatientsDB">
+      <Helmet>
+        <title>Demographics - covid19india.org</title>
+        <meta name="title" content={`Demographics - covid19india.org`} />
+        <meta
+          name="description"
+          content="A demographical overview of the Indian population affected by the coronavirus."
+        />
+      </Helmet>
+
       <div className="filters fadeInUp" style={{animationDelay: '0.2s'}}>
         <div className="filters-left">
           <div className="select">
@@ -331,11 +341,16 @@ function PatientDB(props) {
         <div>
           <h1>Demographics</h1>
 
-          <div className="deep-dive">
+          <div
+            className={`deep-dive ${
+              message || filteredPatients.length === 0 ? 'disabled' : ''
+            }`}
+          >
             <h5>Expand</h5>
             <input
               type="checkbox"
               checked={scaleMode}
+              disabled={message || filteredPatients.length === 0}
               onChange={(event) => {
                 setScaleMode(!scaleMode);
               }}
